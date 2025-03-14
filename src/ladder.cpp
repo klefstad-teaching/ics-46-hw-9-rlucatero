@@ -23,16 +23,10 @@ bool edit_distance_within(const string& str1, const string& str2, int d) {
     int i = 0, j = 0, edits = 0;
     while (i < len1 && j < len2) {
         if (str1[i] != str2[j]) {
-            edits++;
-            if (edits > d) 
-                return false;
-            if (len1 > len2) 
-                i++;
-            else if (len1 < len2) 
-                j++;
-            else {
-                i++; j++;
-            }
+            if (++edits > d) return false;
+            if (len1 > len2) i++;
+            else if (len1 < len2) j++;
+            else { i++; j++; }
         } else {
             i++; j++;
         }
@@ -41,6 +35,7 @@ bool edit_distance_within(const string& str1, const string& str2, int d) {
     return edits <= d;
 }
 
+
 bool is_adjacent(const string& word1, const string& word2) {
     return edit_distance_within(word1, word2, 1);
 }
@@ -48,6 +43,9 @@ bool is_adjacent(const string& word1, const string& word2) {
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
     if (begin_word == end_word) {
         error(begin_word, end_word, "Start and end words must be different.");
+    }
+    if (word_list.find(end_word) == word_list.end()) {
+        error(begin_word, end_word, "End word is not in dic.");
     }
     queue<vector<string>> ladder_queue;
     set<string> visited;
@@ -58,13 +56,13 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         ladder_queue.pop();
         string last_word = current_ladder.back();
         for (const string& word : word_list) {
-            if (visited.find(word) == visited.end() && is_adjacent(last_word, word)) {
-                visited.insert(word);
+            if (is_adjacent(last_word, word) && visited.find(word) == visited.end()) {
                 vector<string> new_ladder = current_ladder;
                 new_ladder.push_back(word);
                 if (word == end_word) {
                     return new_ladder;
                 }
+                visited.insert(word);
                 ladder_queue.push(new_ladder);
             }
         }
