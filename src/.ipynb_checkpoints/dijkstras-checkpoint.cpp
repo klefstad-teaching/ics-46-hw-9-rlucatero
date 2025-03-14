@@ -19,9 +19,8 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
     distance[source] = 0;
     pq.push(Node(source, 0));
     while (!pq.empty()) {
-        Node current = pq.top();
+        int u = pq.top().second;
         pq.pop();
-        int u = current.vertex;
         if (visited[u]) continue;
         visited[u] = true;
         for (const Edge& neighbor : G[u]) {
